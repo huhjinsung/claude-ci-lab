@@ -1,0 +1,37 @@
+name: Claude Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  claude-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::961740251837:role/claude-ci-lab-role
+          aws-region: us-east-1
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Review diff
+        env:
+          CLAUDE_CODE_USE_BEDROCK: "1"
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD | \
+            claude -p "이 diff에서 CRITICAL 수준 문제만 지적, 없으면 PASS 한 단어" \
+            --output-format json --max-turns 3 --max-budget-usd 0.50 | \
+            jq -r '.result' | tee check.md
+          grep -q "CRITICAL" check.md && exit 1 || echo "게이트 통과"
