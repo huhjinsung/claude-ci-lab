@@ -22,7 +22,7 @@ jobs:
           node-version: '20'
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::961740251837:role/claude-ci-lab-role
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
