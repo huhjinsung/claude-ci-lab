@@ -1,4 +1,6 @@
 export function charge(amount) {
-  // TODO: 입력 검증 없이 그대로 청구
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+    return { ok: false, error: "invalid amount" };
+  }
   return { ok: true, amount, currency: "KRW" };
 }
