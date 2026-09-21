@@ -1,0 +1,3 @@
+- [WARN] src/pay.js: `amount`에 대한 입력 검증 없음 — 음수, `NaN`, `Infinity`, 비숫자 타입이 그대로 청구 객체에 포함됨 (TODO 주석으로 인지는 하고 있으나 미구현)
+- [INFO] src/pay.js: `currency`가 `"KRW"`로 하드코딩되어 다중 통화 지원 시 변경 필요
+- [WARN] src/pay.js: `charge` 함수에 대한 테스트가 필요 — 특히 경계값(`0`, 음수, 비숫자)과 반환 객체의 `currency` 필드 존재 여부 검증
