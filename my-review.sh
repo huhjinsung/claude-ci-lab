@@ -8,13 +8,11 @@ DIFF=$(git diff "$RANGE")
 [ -z "$DIFF" ] && { echo "diff 없음"; exit 0; }
 
 echo "2) Claude 리뷰 실행..."
-RESULT=$(claude -p "$(cat <<PROMPT
-다음 diff를 리뷰하세요.
+RESULT=$(echo "$DIFF" | claude -p "$(cat <<'PROMPT'
+다음 stdin으로 전달된 diff를 리뷰하세요.
 관점: 1) 버그 위험 2) 보안 3) 테스트 필요성
 각 지적은 "- [심각도] 파일: 내용" 형식, 심각도는 CRITICAL/WARN/INFO 중 하나.
 심각한 문제가 없으면 "- [INFO] 특이사항 없음" 한 줄만.
-
-$DIFF
 PROMPT
 )" --output-format json --max-turns 5 \
   --allowed-tools "Read" "Grep" "Glob")
